@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>House Price Predictor - Machine Learning</title>
+  <style>
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: #f0f4f8; margin: 0; padding: 30px 20px; display: flex; justify-content: center; }
+    .card { background: #ffffff; border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.08); max-width: 650px; width: 100%; overflow: hidden; }
+    .header { background: linear-gradient(135deg, #1e3a8a, #3b82f6); color: white; padding: 24px; text-align: center; }
+    .header h1 { margin: 0; font-size: 24px; }
+    .header p { margin: 6px 0 0; opacity: 0.85; font-size: 14px; }
+    .content { padding: 25px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .field { display: flex; flex-direction: column; }
+    label { font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 6px; }
+    input, select { padding: 10px 12px; border: 1.5px solid #d1d5db; border-radius: 8px; font-size: 14px; transition: border-color 0.2s; }
+    input:focus { border-color: #2563eb; outline: none; }
+    .btn { grid-column: span 2; margin-top: 10px; background: #2563eb; color: white; border: none; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
+    .btn:hover { background: #1d4ed8; }
+    .results { margin-top: 25px; padding: 20px; background: #f8fafc; border-radius: 10px; border: 1.5px solid #e2e8f0; }
+    .res-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .res-label { font-size: 14px; color: #475569; font-weight: 500; }
+    .res-val { font-size: 20px; font-weight: bold; color: #0f172a; }
+    .highlight { color: #16a34a; font-size: 24px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="header">
+      <h1>🏠 House Price Predictor</h1>
+      <p>Data Science Internship • Simple & Multiple Linear Regression</p>
+    </div>
+    <div class="content">
+      <div class="grid">
+        <div class="field">
+          <label>Square Footage (sq ft)</label>
+          <input type="number" id="sqft" value="2200" step="50" min="500" max="6000">
+        </div>
+        <div class="field">
+          <label>Total Rooms Above Ground</label>
+          <input type="number" id="rooms" value="7" min="2" max="15">
+        </div>
+        <div class="field">
+          <label>Bedrooms</label>
+          <input type="number" id="beds" value="3" min="1" max="8">
+        </div>
+        <div class="field">
+          <label>Bathrooms</label>
+          <input type="number" id="baths" value="2.5" step="0.5" min="1" max="6">
+        </div>
+        <div class="field">
+          <label>Year Built (Construction Year)</label>
+          <input type="number" id="year" value="2016" min="1950" max="2026">
+        </div>
+        <div class="field">
+          <label>Lot Area (sq ft)</label>
+          <input type="number" id="lot" value="8500" step="250" min="2000" max="30000">
+        </div>
+        <div class="field">
+          <label>Garage Capacity (Cars)</label>
+          <input type="number" id="garage" value="2" min="0" max="4">
+        </div>
+        <div class="field">
+          <label>Overall Quality (1 to 10)</label>
+          <select id="quality">
+            <option value="4">4 - Below Average</option>
+            <option value="5">5 - Average</option>
+            <option value="6">6 - Above Average</option>
+            <option value="7">7 - Good</option>
+            <option value="8" selected>8 - Very Good</option>
+            <option value="9">9 - Excellent</option>
+            <option value="10">10 - Luxury Custom</option>
+          </select>
+        </div>
+        <button class="btn" onclick="calculate()">✨ Calculate Predicted Price ✨</button>
+      </div>
+
+      <div class="results">
+        <div class="res-item">
+          <span class="res-label">Simple Linear Regression (SqFt only):</span>
+          <span class="res-val" id="simple-res">$588,472</span>
+        </div>
+        <div class="res-item" style="margin-bottom: 0;">
+          <span class="res-label">Multiple Linear Regression (All Features):</span>
+          <span class="res-val highlight" id="multi-res">$628,450</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function calculate() {
+      const sqft = parseFloat(document.getElementById('sqft').value) || 2000;
+      const rooms = parseFloat(document.getElementById('rooms').value) || 6;
+      const beds = parseFloat(document.getElementById('beds').value) || 3;
+      const baths = parseFloat(document.getElementById('baths').value) || 2;
+      const year = parseFloat(document.getElementById('year').value) || 2010;
+      const lot = parseFloat(document.getElementById('lot').value) || 8000;
+      const garage = parseFloat(document.getElementById('garage').value) || 2;
+      const quality = parseFloat(document.getElementById('quality').value) || 7;
+
+      // Simple Model: y = 171821 + 189.387 * sqft
+      const simplePrice = 171821.0 + 189.3869 * sqft;
+
+      // Multiple Model Standardized
+      const mean = [1955.093, 6.317, 3.016, 2.142, 1988.391, 8801.890, 1.751, 6.793];
+      const scale = [553.570, 1.432, 1.017, 0.762, 19.481, 3037.991, 0.803, 0.984];
+      const coef = [74751.86, 8171.51, 3891.05, 5518.34, 8445.54, 11374.23, 7169.58, 14945.57];
+      const intercept = 542090.08;
+
+      const raw = [sqft, rooms, beds, baths, year, lot, garage, quality];
+      let multiPrice = intercept;
+      for (let i = 0; i < 8; i++) {
+        multiPrice += ((raw[i] - mean[i]) / scale[i]) * coef[i];
+      }
+
+      document.getElementById('simple-res').innerText = '$' + Math.round(simplePrice).toLocaleString();
+      document.getElementById('multi-res').innerText = '$' + Math.round(multiPrice).toLocaleString();
+    }
+    calculate();
+  </script>
+</body>
+</html>

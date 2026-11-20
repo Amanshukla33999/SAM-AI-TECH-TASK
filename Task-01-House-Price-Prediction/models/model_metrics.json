@@ -1,0 +1,13 @@
+{
+    "Simple_Linear_Regression": {
+        "R2": 0.9018,
+        "RMSE": 34682.85,
+        "MAE": 25736.75
+    },
+    "Multiple_Linear_Regression": {
+        "R2": 0.9633,
+        "Adjusted_R2": 0.962,
+        "RMSE": 21208.14,
+        "MAE": 15727.13
+    }
+}
